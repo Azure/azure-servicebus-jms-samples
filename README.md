@@ -1,33 +1,48 @@
-# Project
+# README
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+This repository holds the samples for JMS 2.0 implementation for Azure Service Bus - Premium tier
 
-As the maintainer of this project, please make a few updates:
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+## Before you begin
 
-## Contributing
+   * Download the Java IDE of choice - [Eclipse](https://www.eclipse.org/ide/) or [IntelliJ](https://www.jetbrains.com/idea/).
+   * Clone the repository - This repository contains a Maven project that can be easily imported into the IDE. Follow this [guide](https://www.omnijava.com/2016/07/10/importing-maven-projects-from-git-into-eclipse-that-were-created-by-netbeans/) for quick steps.
+   * Add Configuration - Add Service Bus Connection string to the Constants.java class.
+   
+		public static final String SERVICE_BUS_CONNECTION_STRING = "<YOUR_SERVICEBUS_CONNECTION_STRING>";
+   
+   * Select each individual sample, and run as a Java Application.
+   
+   	![Run Java Application](media/Run_Java_app.jpg)
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
 
-When you submit a pull request, a CLA bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
+## Samples
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+Below is a quick summary of which samples included and what they are currently testing.
 
-## Trademarks
+### Queue - Send and Receive
 
-This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
-trademarks or logos is subject to and must follow 
-[Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
-Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
-Any use of third-party trademarks or logos are subject to those third-party's policies.
+   * Queue is created (if it doesn't exist).
+   * 10 messages are sent.
+   * 10 messages are received.
+   
+### Queue - Send and Receive messages upto 10 MB
+
+   * Queue is created (if it doesn't exist).
+   * 10 messages of 10 MB each are sent.
+   * 10 messages of 10 MB each are received.
+
+### Queue - Send and Receive messages with message selectors
+
+   * Queue is created (if it doesn't exist).
+   * 10 messages are sent - each with a custom property and a JMSCorrelation ID set.
+   * A consumer is created with a message selector (JMSCorrelationID='5' AND prop1='test' OR prop2='test')
+   * 1 message (which satisfies the selector conditions) is received.
+   * The remaining 9 messages can be browsed using the [Service Bus Explorer](https://docs.microsoft.com/azure/service-bus-messaging/explorer).
+
+### Cross entity Transactioned Send
+
+   * Transacted session is created
+   * 2 producers are created on 2 different queues.
+   * Message is sent to the 2nd producer through the first queue.
+   * The scenario is validated by receiving from both queues to ensure the message lands in the same queue.
