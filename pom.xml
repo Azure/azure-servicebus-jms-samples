@@ -10,7 +10,12 @@
 		<dependency>
 			<groupId>com.microsoft.azure</groupId>
 			<artifactId>azure-servicebus-jms</artifactId>
-			<version>0.0.7</version>
+			<version>1.0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.azure</groupId>
+			<artifactId>azure-identity</artifactId>
+			<version>1.12.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
