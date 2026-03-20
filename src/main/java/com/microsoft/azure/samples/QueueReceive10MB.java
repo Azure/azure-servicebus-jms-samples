@@ -58,10 +58,10 @@ public class QueueReceive10MB {
             long start = System.currentTimeMillis();
             for (int i = 1; i <= count; i++) {
                 BytesMessage message = session.createBytesMessage();
-                // Write slightly under 10MB to leave room for AMQP protocol framing overhead (~200 bytes)
+                // Write slightly under 10MB: subtract 1KB as a safety buffer for AMQP protocol framing overhead
                 int totalChunks = 10 * 1024 - 1; // 10,484,736 bytes
+                byte[] bytes = new byte[1024];
                 for (int j = 0; j < totalChunks; j++) {
-                    byte[] bytes = new byte[1024];
                     rnd.nextBytes(bytes);
                     message.writeBytes(bytes); 
                 } 

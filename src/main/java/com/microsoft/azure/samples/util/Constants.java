@@ -40,14 +40,22 @@ public class Constants {
     }
 
     private static boolean isConfigured(String value) {
-        if (value == null || value.isEmpty() || value.startsWith("<")) {
+        if (value == null) {
+            return false;
+        }
+        String normalized = value.trim();
+        if (normalized.isEmpty() || normalized.startsWith("<")) {
             return false;
         }
         // Connection strings start with "Endpoint=sb://"
-        if (value.contains("Endpoint=sb://")) {
-            return value.contains("SharedAccessKeyName=") || value.contains("SharedAccessSignature=");
+        if (normalized.contains("Endpoint=sb://")) {
+            return normalized.contains("SharedAccessKeyName=") || normalized.contains("SharedAccessSignature=");
+        }
+        // Strip sb:// scheme if user copied from an AMQP URI
+        if (normalized.startsWith("sb://")) {
+            normalized = normalized.substring("sb://".length());
         }
         // Host names must end with ".servicebus.windows.net"
-        return value.endsWith(".servicebus.windows.net");
+        return normalized.endsWith(".servicebus.windows.net");
     }
 }
