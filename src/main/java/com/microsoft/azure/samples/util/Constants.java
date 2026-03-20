@@ -64,7 +64,10 @@ public class Constants {
         }
         // Connection strings start with "Endpoint=sb://"
         if (normalized.contains("Endpoint=sb://")) {
-            return normalized.contains("SharedAccessKeyName=") || normalized.contains("SharedAccessSignature=");
+            boolean hasKeyName = normalized.contains("SharedAccessKeyName=");
+            boolean hasKey = normalized.contains("SharedAccessKey=");
+            boolean hasSas = normalized.contains("SharedAccessSignature=");
+            return (hasKeyName && hasKey) || hasSas;
         }
         // Host names must end with ".servicebus.windows.net"
         return normalizeHost(normalized).endsWith(".servicebus.windows.net");
