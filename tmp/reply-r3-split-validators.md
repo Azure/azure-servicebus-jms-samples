@@ -1,0 +1,3 @@
+Investigated: the routing is already correct as-is. If a user pastes a connection string into `SERVICE_BUS_HOST`, it won't end with `.servicebus.windows.net` after normalization → returns false → falls through to the connection string branch. Conversely, a hostname in `SERVICE_BUS_CONNECTION_STRING` won't contain `Endpoint=sb://` → returns false. The format-specific checks already prevent cross-contamination without needing separate validators.
+
+This is sample code where simplicity matters — splitting into two validators adds API surface for a scenario that already fails safely.

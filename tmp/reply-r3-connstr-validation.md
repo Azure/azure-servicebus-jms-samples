@@ -1,0 +1,1 @@
+Good catch — tightened the validation to require `SharedAccessKey=` when `SharedAccessKeyName=` is present. See 352dca1.

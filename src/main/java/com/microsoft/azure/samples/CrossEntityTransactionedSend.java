@@ -67,7 +67,9 @@ public class CrossEntityTransactionedSend {
 				System.err.println("Did not receive message from " + queueName2);
 			}
 		} finally {
-			connection.close();
+			if (connection != null) {
+				connection.close();
+			}
 		}
 	}
 

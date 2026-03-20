@@ -41,7 +41,7 @@ public class Constants {
     }
 
     /**
-     * Strips scheme prefix and trailing slashes from a host value.
+     * Strips the {@code sb://} scheme prefix and trailing slashes from a host value.
      */
     private static String normalizeHost(String value) {
         String normalized = value.trim();
