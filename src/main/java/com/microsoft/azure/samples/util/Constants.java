@@ -26,9 +26,10 @@ public class Constants {
 
         if (isConfigured(SERVICE_BUS_HOST)) {
             // Microsoft Entra ID authentication (recommended for production)
+            String host = normalizeHost(SERVICE_BUS_HOST);
             return new ServiceBusJmsConnectionFactory(
                     new DefaultAzureCredentialBuilder().build(),
-                    SERVICE_BUS_HOST,
+                    host,
                     settings);
         } else if (isConfigured(SERVICE_BUS_CONNECTION_STRING)) {
             // Connection string authentication
@@ -37,6 +38,20 @@ public class Constants {
             throw new IllegalStateException(
                     "Configure either SERVICE_BUS_HOST (recommended) or SERVICE_BUS_CONNECTION_STRING in Constants.java");
         }
+    }
+
+    /**
+     * Strips scheme prefix and trailing slashes from a host value.
+     */
+    private static String normalizeHost(String value) {
+        String normalized = value.trim();
+        if (normalized.startsWith("sb://")) {
+            normalized = normalized.substring("sb://".length());
+        }
+        while (normalized.endsWith("/")) {
+            normalized = normalized.substring(0, normalized.length() - 1);
+        }
+        return normalized;
     }
 
     private static boolean isConfigured(String value) {
@@ -51,11 +66,7 @@ public class Constants {
         if (normalized.contains("Endpoint=sb://")) {
             return normalized.contains("SharedAccessKeyName=") || normalized.contains("SharedAccessSignature=");
         }
-        // Strip sb:// scheme if user copied from an AMQP URI
-        if (normalized.startsWith("sb://")) {
-            normalized = normalized.substring("sb://".length());
-        }
         // Host names must end with ".servicebus.windows.net"
-        return normalized.endsWith(".servicebus.windows.net");
+        return normalizeHost(normalized).endsWith(".servicebus.windows.net");
     }
 }
