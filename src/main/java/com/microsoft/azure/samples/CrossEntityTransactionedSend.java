@@ -13,7 +13,7 @@ import com.microsoft.azure.samples.util.Constants;
 
 public class CrossEntityTransactionedSend {
 
-	public static void main() throws JMSException {
+	public static void main(String[] args) throws JMSException {
 		String queueName = "MyQueue";
 		String queueName2 = "MyQueue2";
 		ConnectionFactory factory = Constants.createConnectionFactory();
