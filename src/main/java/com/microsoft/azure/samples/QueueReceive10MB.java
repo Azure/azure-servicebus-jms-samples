@@ -2,23 +2,21 @@ package com.microsoft.azure.samples;
 
 import java.util.Random;
 
-import javax.jms.BytesMessage;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.DeliveryMode;
-import javax.jms.Destination;
-import javax.jms.ExceptionListener;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
+import jakarta.jms.BytesMessage;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.DeliveryMode;
+import jakarta.jms.Destination;
+import jakarta.jms.ExceptionListener;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Session;
 
 import org.apache.qpid.jms.JmsQueue;
 
 import com.microsoft.azure.samples.util.Constants;
-import com.microsoft.azure.servicebus.jms.ServiceBusJmsConnectionFactory;
-import com.microsoft.azure.servicebus.jms.ServiceBusJmsConnectionFactorySettings;
 
 public class QueueReceive10MB {
     private static final int DEFAULT_COUNT = 10;
@@ -41,7 +39,7 @@ public class QueueReceive10MB {
         	/*
         	 * Initialize the JMS Connection and Session.
         	 */
-            ConnectionFactory factory = new ServiceBusJmsConnectionFactory(Constants.SERVICE_BUS_CONNECTION_STRING, new ServiceBusJmsConnectionFactorySettings());
+            ConnectionFactory factory = Constants.createConnectionFactory();
             Connection connection = factory.createConnection();
 
             Destination queue = new JmsQueue(Constants.QUEUE);
@@ -60,7 +58,9 @@ public class QueueReceive10MB {
             long start = System.currentTimeMillis();
             for (int i = 1; i <= count; i++) {
                 BytesMessage message = session.createBytesMessage();
-                for (int j = 0; j < 10*1024; j++) {
+                // Write slightly under 10MB to leave room for AMQP protocol framing overhead (~200 bytes)
+                int totalChunks = 10 * 1024 - 1; // 10,484,736 bytes
+                for (int j = 0; j < totalChunks; j++) {
                     byte[] bytes = new byte[1024];
                     rnd.nextBytes(bytes);
                     message.writeBytes(bytes); 
