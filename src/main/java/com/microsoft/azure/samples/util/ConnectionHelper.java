@@ -5,7 +5,9 @@ import com.azure.servicebus.jms.ServiceBusJmsConnectionFactory;
 import com.azure.servicebus.jms.ServiceBusJmsConnectionFactorySettings;
 import jakarta.jms.ConnectionFactory;
 
-public class ConnectionHelper {
+public final class ConnectionHelper {
+
+    private ConnectionHelper() { }
 
     /**
      * Creates a JMS ConnectionFactory using the best available authentication method.
