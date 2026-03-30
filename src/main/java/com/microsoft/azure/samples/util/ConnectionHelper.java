@@ -15,13 +15,13 @@ public class ConnectionHelper {
     public static ConnectionFactory createConnectionFactory() {
         ServiceBusJmsConnectionFactorySettings settings = new ServiceBusJmsConnectionFactorySettings();
 
-        if (Constants.SERVICE_BUS_HOST != null && !Constants.SERVICE_BUS_HOST.isBlank()) {
+        if (Constants.SERVICE_BUS_HOST != null && !Constants.SERVICE_BUS_HOST.trim().isEmpty()) {
             return new ServiceBusJmsConnectionFactory(
                     new DefaultAzureCredentialBuilder().build(),
                     Constants.SERVICE_BUS_HOST,
                     settings);
         }
-        if (Constants.SERVICE_BUS_CONNECTION_STRING != null && !Constants.SERVICE_BUS_CONNECTION_STRING.isBlank()) {
+        if (Constants.SERVICE_BUS_CONNECTION_STRING != null && !Constants.SERVICE_BUS_CONNECTION_STRING.trim().isEmpty()) {
             return new ServiceBusJmsConnectionFactory(
                     Constants.SERVICE_BUS_CONNECTION_STRING, settings);
         }
