@@ -1,22 +1,21 @@
 package com.microsoft.azure.samples;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.DeliveryMode;
-import javax.jms.Destination;
-import javax.jms.ExceptionListener;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.jms.TextMessage;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.DeliveryMode;
+import jakarta.jms.Destination;
+import jakarta.jms.ExceptionListener;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Session;
+import jakarta.jms.TextMessage;
 
 import org.apache.qpid.jms.JmsQueue;
 
+import com.microsoft.azure.samples.util.ConnectionHelper;
 import com.microsoft.azure.samples.util.Constants;
-import com.microsoft.azure.servicebus.jms.ServiceBusJmsConnectionFactory;
-import com.microsoft.azure.servicebus.jms.ServiceBusJmsConnectionFactorySettings;
 
 public class QueueReceive {
 	private static final int DEFAULT_COUNT = 10;
@@ -36,7 +35,7 @@ public class QueueReceive {
         	/*
         	 * Initialize the JMS Connection and Session.
         	 */
-            ConnectionFactory factory = new ServiceBusJmsConnectionFactory(Constants.SERVICE_BUS_CONNECTION_STRING, new ServiceBusJmsConnectionFactorySettings());
+            ConnectionFactory factory = ConnectionHelper.createConnectionFactory();
             Connection connection = factory.createConnection();
 
             Destination queue = new JmsQueue(Constants.QUEUE);

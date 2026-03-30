@@ -1,23 +1,22 @@
 package com.microsoft.azure.samples;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Queue;
-import javax.jms.Session;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Queue;
+import jakarta.jms.Session;
 
-import com.microsoft.azure.samples.util.Constants;
-import com.microsoft.azure.servicebus.jms.ServiceBusJmsConnectionFactory;
+import com.microsoft.azure.samples.util.ConnectionHelper;
 
 public class CrossEntityTransactionedSend {
 
-	public static void main() throws JMSException {
+	public static void main(String[] args) throws JMSException {
 		String queueName = "MyQueue";
 		String queueName2 = "MyQueue2";
-		ConnectionFactory factory = new ServiceBusJmsConnectionFactory(Constants.SERVICE_BUS_CONNECTION_STRING, null);
+		ConnectionFactory factory = ConnectionHelper.createConnectionFactory();
 		Connection connection = null; 
 
 		try {
@@ -68,7 +67,9 @@ public class CrossEntityTransactionedSend {
 				System.err.println("Did not receive message from " + queueName2);
 			}
 		} finally {
-			connection.close();
+			if (connection != null) {
+				connection.close();
+			}
 		}
 	}
 
