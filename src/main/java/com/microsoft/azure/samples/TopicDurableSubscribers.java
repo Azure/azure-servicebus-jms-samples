@@ -16,6 +16,7 @@ import jakarta.jms.TopicSubscriber;
 
 import org.apache.qpid.jms.JmsTopic;
 
+import com.microsoft.azure.samples.util.ConnectionHelper;
 import com.microsoft.azure.samples.util.Constants;
 
 public class TopicDurableSubscribers {
@@ -36,7 +37,7 @@ public class TopicDurableSubscribers {
         	/*
         	 * Initialize the JMS Connection and Session.
         	 */
-            ConnectionFactory factory = Constants.createConnectionFactory();
+            ConnectionFactory factory = ConnectionHelper.createConnectionFactory();
             Connection connection = factory.createConnection();
             
             Destination dest = new JmsTopic(Constants.TOPIC);

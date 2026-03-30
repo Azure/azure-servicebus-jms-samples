@@ -16,6 +16,7 @@ import jakarta.jms.Session;
 
 import org.apache.qpid.jms.JmsQueue;
 
+import com.microsoft.azure.samples.util.ConnectionHelper;
 import com.microsoft.azure.samples.util.Constants;
 
 public class QueueReceive10MB {
@@ -39,7 +40,7 @@ public class QueueReceive10MB {
         	/*
         	 * Initialize the JMS Connection and Session.
         	 */
-            ConnectionFactory factory = Constants.createConnectionFactory();
+            ConnectionFactory factory = ConnectionHelper.createConnectionFactory();
             Connection connection = factory.createConnection();
 
             Destination queue = new JmsQueue(Constants.QUEUE);

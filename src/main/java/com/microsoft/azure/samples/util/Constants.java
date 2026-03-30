@@ -1,75 +1,13 @@
 package com.microsoft.azure.samples.util;
 
-import com.azure.identity.DefaultAzureCredentialBuilder;
-import com.azure.servicebus.jms.ServiceBusJmsConnectionFactory;
-import com.azure.servicebus.jms.ServiceBusJmsConnectionFactorySettings;
-import jakarta.jms.ConnectionFactory;
-
 public class Constants {
-    // Option 1: Connection string authentication
-    public static final String SERVICE_BUS_CONNECTION_STRING = "<YOUR_SERVICEBUS_CONNECTION_STRING>";
+    // ── Configure ONE of these ──────────────────────────────────────────────
+    // Option 1 (recommended): Microsoft Entra ID authentication
+    public static final String SERVICE_BUS_HOST = null; // e.g. "your-namespace.servicebus.windows.net"
 
-    // Option 2: Microsoft Entra ID authentication (recommended for production)
-    // Set this to your namespace host, e.g. "your-namespace.servicebus.windows.net"
-    public static final String SERVICE_BUS_HOST = "<YOUR_NAMESPACE>.servicebus.windows.net";
+    // Option 2: Connection string authentication
+    public static final String SERVICE_BUS_CONNECTION_STRING = null; // e.g. "Endpoint=sb://..."
 
     public static final String QUEUE = "testqueue";
     public static final String TOPIC = "testtopic";
-
-    /**
-     * Creates a JMS ConnectionFactory using the best available authentication method.
-     * If SERVICE_BUS_HOST is set, uses Microsoft Entra ID via DefaultAzureCredential.
-     * Otherwise, falls back to connection string auth.
-     */
-    public static ConnectionFactory createConnectionFactory() {
-        ServiceBusJmsConnectionFactorySettings settings = new ServiceBusJmsConnectionFactorySettings();
-
-        if (isConfigured(SERVICE_BUS_HOST)) {
-            // Microsoft Entra ID authentication (recommended for production)
-            String host = normalizeHost(SERVICE_BUS_HOST);
-            return new ServiceBusJmsConnectionFactory(
-                    new DefaultAzureCredentialBuilder().build(),
-                    host,
-                    settings);
-        } else if (isConfigured(SERVICE_BUS_CONNECTION_STRING)) {
-            // Connection string authentication
-            return new ServiceBusJmsConnectionFactory(SERVICE_BUS_CONNECTION_STRING, settings);
-        } else {
-            throw new IllegalStateException(
-                    "Configure either SERVICE_BUS_HOST (recommended) or SERVICE_BUS_CONNECTION_STRING in Constants.java");
-        }
-    }
-
-    /**
-     * Strips the {@code sb://} scheme prefix and trailing slashes from a host value.
-     */
-    private static String normalizeHost(String value) {
-        String normalized = value.trim();
-        if (normalized.startsWith("sb://")) {
-            normalized = normalized.substring("sb://".length());
-        }
-        while (normalized.endsWith("/")) {
-            normalized = normalized.substring(0, normalized.length() - 1);
-        }
-        return normalized;
-    }
-
-    private static boolean isConfigured(String value) {
-        if (value == null) {
-            return false;
-        }
-        String normalized = value.trim();
-        if (normalized.isEmpty() || normalized.startsWith("<")) {
-            return false;
-        }
-        // Connection strings start with "Endpoint=sb://"
-        if (normalized.contains("Endpoint=sb://")) {
-            boolean hasKeyName = normalized.contains("SharedAccessKeyName=");
-            boolean hasKey = normalized.contains("SharedAccessKey=");
-            boolean hasSas = normalized.contains("SharedAccessSignature=");
-            return (hasKeyName && hasKey) || hasSas;
-        }
-        // Host names must end with ".servicebus.windows.net"
-        return normalizeHost(normalized).endsWith(".servicebus.windows.net");
-    }
 }

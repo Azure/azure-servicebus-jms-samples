@@ -14,6 +14,7 @@ import jakarta.jms.TextMessage;
 
 import org.apache.qpid.jms.JmsQueue;
 
+import com.microsoft.azure.samples.util.ConnectionHelper;
 import com.microsoft.azure.samples.util.Constants;
 
 public class QueueTransactions {
@@ -34,7 +35,7 @@ public class QueueTransactions {
         	/*
         	 * Initialize the JMS Connection and Session.
         	 */
-            ConnectionFactory factory = Constants.createConnectionFactory();
+            ConnectionFactory factory = ConnectionHelper.createConnectionFactory();
             Connection connection = factory.createConnection();
 
             Destination queue = new JmsQueue(Constants.QUEUE);

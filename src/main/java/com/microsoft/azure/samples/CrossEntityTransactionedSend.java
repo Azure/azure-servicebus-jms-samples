@@ -9,14 +9,14 @@ import jakarta.jms.MessageProducer;
 import jakarta.jms.Queue;
 import jakarta.jms.Session;
 
-import com.microsoft.azure.samples.util.Constants;
+import com.microsoft.azure.samples.util.ConnectionHelper;
 
 public class CrossEntityTransactionedSend {
 
 	public static void main(String[] args) throws JMSException {
 		String queueName = "MyQueue";
 		String queueName2 = "MyQueue2";
-		ConnectionFactory factory = Constants.createConnectionFactory();
+		ConnectionFactory factory = ConnectionHelper.createConnectionFactory();
 		Connection connection = null; 
 
 		try {
