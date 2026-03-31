@@ -96,7 +96,7 @@ public class QueueDeadLetterReceive {
              * queue and subscription. Access it as a separate JMS destination using
              * the path format: <queue-name>/$deadletterqueue
              *
-             * Create a JmsQueue with this full path — no special API is needed.
+             * Create a JmsQueue with this full path - no special API is needed.
              */
             String queueDlqPath = Constants.QUEUE + "/$deadletterqueue";
             System.out.println("\nReceiving from queue DLQ: " + queueDlqPath);
@@ -130,8 +130,8 @@ public class QueueDeadLetterReceive {
                  * Step 4: Read dead-letter metadata.
                  *
                  * Azure Service Bus sets these properties on dead-lettered messages:
-                 *   DeadLetterReason         — reason the message was dead-lettered
-                 *   DeadLetterErrorDescription — additional detail from the broker
+                 *   DeadLetterReason         - reason the message was dead-lettered
+                 *   DeadLetterErrorDescription - additional detail from the broker
                  *
                  * For TTL-expired messages, these are typically:
                  *   Reason:      "TTLExpiredException"
@@ -162,7 +162,7 @@ public class QueueDeadLetterReceive {
              * named "testtopic" has a DLQ at:
              *   testtopic/Subscriptions/my-subscription/$deadletterqueue
              *
-             * Usage is the same — create a JmsQueue with the full path:
+             * Usage is the same - create a JmsQueue with the full path:
              *   String topicDlqPath = Constants.TOPIC
              *       + "/Subscriptions/my-subscription/$deadletterqueue";
              *   JmsQueue topicDlq = new JmsQueue(topicDlqPath);
