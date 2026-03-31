@@ -1,4 +1,4 @@
-# Spring Boot JMS Resilience Sample
+# Spring Boot JMS resilience sample
 
 Demonstrates correct connection factory configuration for Azure Service Bus JMS
 with resilient listeners and efficient senders.
@@ -48,14 +48,14 @@ and listeners:
 **Never use `SingleConnectionFactory` for listener containers.** It forces all
 listeners to share a single JMS connection. If that connection is disrupted for
 any reason (token expiry, gateway upgrade, network interruption), all listeners
-lose connectivity simultaneously and cannot recover independently.
+lose connectivity simultaneously and can't recover independently.
 
-With the raw `ServiceBusJmsConnectionFactory`, each listener container manages
+By using the raw `ServiceBusJmsConnectionFactory`, each listener container manages
 its own connection and can reconnect without affecting others.
 
 ## Spring Properties Reference
 
-This sample configures factories explicitly in `JmsConfig.java`. The table below
+This sample configures factories explicitly in `JmsConfig.java`. The following table
 shows the equivalent behavior when using `spring-cloud-azure-starter-servicebus-jms`
 (v6.2.0+) with property-based configuration:
 
@@ -70,8 +70,8 @@ The default row (both unset) matches what this sample configures explicitly.
 
 ## Prerequisites
 
-- **Java 17+**
-- **Maven 3.8+**
+- **Java 17 or later**
+- **Maven 3.8 or later**
 - **Azure Service Bus Premium namespace** (JMS 2.0 requires Premium tier)
 - A queue named `testqueue` (configurable via `sample.queue-name` property)
 
@@ -83,7 +83,7 @@ The default row (both unset) matches what this sample configures explicitly.
 export SERVICEBUS_NAMESPACE="your-namespace"
 ```
 
-This uses `DefaultAzureCredential`, which automatically picks up credentials from
+This option uses `DefaultAzureCredential`, which automatically picks up credentials from
 Managed Identity, Azure CLI, IntelliJ, VS Code, and other sources.
 
 ### Option 2: Connection string
@@ -92,7 +92,7 @@ Managed Identity, Azure CLI, IntelliJ, VS Code, and other sources.
 export SERVICEBUS_CONNECTION_STRING="Endpoint=sb://your-namespace.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=..."
 ```
 
-## Build and Run
+## Build and run
 
 ```bash
 cd spring-boot-resilience
@@ -101,10 +101,10 @@ java -jar target/spring-boot-jms-resilience-0.0.1-SNAPSHOT.jar
 ```
 
 The application sends a test message every 10 seconds and listens for messages
-on the configured queue. Watch the console for send/receive logs and any
+on the configured queue. Watch the console for send and receive logs and any
 connection error events.
 
-## Key Files
+## Key files
 
 | File | Purpose |
 |------|---------|
@@ -113,19 +113,19 @@ connection error events.
 | `MessageListener.java` | Receives messages via `@JmsListener` with error handling that separates broker errors from application errors. |
 | `application.yml` | Connection properties, queue name, and logging configuration. |
 
-## Known Pitfalls
+## Known pitfalls
 
 1. **Using the same factory for senders and listeners.** Senders need caching
-   for efficiency; listeners need raw connections for resilience. The old Spring
+   for efficiency. Listeners need raw connections for resilience. The old Spring
    Cloud Azure default (pre-6.2.0) used the same factory for both.
 
-2. **Missing exception listener.** Without one, connection drops produce no
+1. **Missing exception listener.** Without one, connection drops produce no
    log entry, no metric, and no alert. The only symptom is that messages
    stop being consumed.
 
-3. **`SingleConnectionFactory` for listeners.** Prevents independent listener
-   recovery (see "What NOT to use" above).
+1. **`SingleConnectionFactory` for listeners.** Prevents independent listener
+   recovery (see "What NOT to use" earlier in this article).
 
-4. **`JmsPoolConnectionFactory` for listeners.** Pooled connections can become
+1. **`JmsPoolConnectionFactory` for listeners.** Pooled connections can become
    stale. If you must pool, ensure health-check and eviction settings are
    properly configured.
