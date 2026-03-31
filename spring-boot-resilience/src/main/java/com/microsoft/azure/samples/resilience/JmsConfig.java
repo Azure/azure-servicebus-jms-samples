@@ -24,7 +24,7 @@ import org.springframework.jms.core.JmsTemplate;
  * <p><b>Senders</b> use {@link CachingConnectionFactory}, which maintains a single
  * AMQP connection and caches sessions across sends. Without caching,
  * {@link JmsTemplate} creates and closes a connection per send — at volume this
- * exhausts the broker's 256 AMQP link limit.</p>
+ * exhausts broker resources under load.</p>
  *
  * <p><b>Listeners</b> use the raw {@link ServiceBusJmsConnectionFactory} directly.
  * Each listener container opens its own AMQP connection with independent lifecycle.

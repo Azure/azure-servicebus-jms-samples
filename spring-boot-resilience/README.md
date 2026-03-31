@@ -40,7 +40,7 @@ and listeners:
 
 | Role | Factory | Reason |
 |------|---------|--------|
-| **Senders** | `CachingConnectionFactory` | Reuses connections and sessions across sends. Without caching, `JmsTemplate` creates and closes a connection per send, which exhausts the 256 AMQP link limit under load. |
+| **Senders** | `CachingConnectionFactory` | Reuses connections and sessions across sends. Without caching, `JmsTemplate` creates and closes a connection per send, which can exhaust broker resources under load. |
 | **Listeners** | Raw `ServiceBusJmsConnectionFactory` | Each listener container gets its own AMQP connection with independent lifecycle. If one connection fails (token expiry, gateway upgrade), only that listener is affected, and Spring recreates the connection automatically. |
 
 ### What NOT to use for listeners
