@@ -46,17 +46,12 @@ and listeners:
 ### What NOT to use for listeners
 
 **Never use `SingleConnectionFactory` for listener containers.** It forces all
-listeners to share a single JMS connection. When that connection enters a CLOSED
-state after token expiry:
+listeners to share a single JMS connection. If that connection is disrupted for
+any reason (token expiry, gateway upgrade, network interruption), all listeners
+lose connectivity simultaneously and cannot recover independently.
 
-1. Listener threads block in `createSession()` on the closed connection.
-2. No exception is surfaced to Spring's `DefaultMessageListenerContainer`.
-3. Recovery logic never triggers — all listeners become "zombie listeners."
-4. The application appears running, but no messages are consumed.
-5. The only fix is a restart.
-
-Without this separation, listeners sharing a single connection cannot recover
-independently — the application must be restarted.
+With the raw `ServiceBusJmsConnectionFactory`, each listener container manages
+its own connection and can reconnect without affecting others.
 
 ## Spring Properties Reference
 
