@@ -83,7 +83,7 @@ public class QueueScheduledSend {
              *
              * getJMSDeliveryTime() returns the earliest time the message
              * becomes deliverable — for the scheduled message this will be
-             * approximately sendTime + deliveryDelay.
+             * approximately scheduledSendTime + DELIVERY_DELAY_MS.
              */
             MessageConsumer consumer = session.createConsumer(queue);
 
@@ -93,8 +93,6 @@ public class QueueScheduledSend {
                     System.out.println("[" + Instant.now() + "] No message received within timeout.");
                     break;
                 }
-                received.acknowledge();
-
                 String body = (received instanceof TextMessage)
                         ? ((TextMessage) received).getText()
                         : received.toString();
@@ -104,6 +102,8 @@ public class QueueScheduledSend {
                 if (deliveryTime > 0) {
                     System.out.println("  JMSDeliveryTime: " + Instant.ofEpochMilli(deliveryTime));
                 }
+
+                received.acknowledge();
             }
 
             consumer.close();
