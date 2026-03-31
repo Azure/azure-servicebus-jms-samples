@@ -119,18 +119,13 @@ connection error events.
    for efficiency; listeners need raw connections for resilience. The old Spring
    Cloud Azure default (pre-6.2.0) used the same factory for both.
 
-2. **Missing exception listener.** Without one, connection drops are completely
-   silent. Without one, there is no log entry, no metric, and no alert. The only symptom is that messages
+2. **Missing exception listener.** Without one, connection drops produce no
+   log entry, no metric, and no alert. The only symptom is that messages
    stop being consumed.
 
-3. **Token expiry varies by platform.** On Windows, Entra ID tokens expire at
-   ~1 hour with reliable reconnection. On Linux (Managed Identity), tokens last
-   ~24 hours, and the reconnection failure is harder to reproduce but more
-   severe when it occurs.
-
-4. **`SingleConnectionFactory` for listeners.** Prevents independent listener
+3. **`SingleConnectionFactory` for listeners.** Prevents independent listener
    recovery (see "What NOT to use" above).
 
-5. **`JmsPoolConnectionFactory` for listeners.** Pooled connections can become
+4. **`JmsPoolConnectionFactory` for listeners.** Pooled connections can become
    stale. If you must pool, ensure health-check and eviction settings are
    properly configured.
