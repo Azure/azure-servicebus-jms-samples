@@ -65,12 +65,12 @@ public class JmsConfig {
      *
      * <p>Supports two authentication modes:</p>
      * <ul>
-     *   <li><b>Connection string</b>: Set {@code SERVICEBUS_CONNECTION_STRING}
-     *       environment variable.</li>
-     *   <li><b>Entra ID (passwordless)</b>: Set {@code SERVICEBUS_NAMESPACE}
+     *   <li><b>Microsoft Entra ID (recommended)</b>: Set {@code SERVICEBUS_NAMESPACE}
      *       environment variable. Uses {@code DefaultAzureCredential} which
      *       supports Managed Identity, Azure CLI, IntelliJ, VS Code, and other
      *       credential sources.</li>
+     *   <li><b>Connection string</b>: Set {@code SERVICEBUS_CONNECTION_STRING}
+     *       environment variable.</li>
      * </ul>
      *
      * <p>The factory's built-in reconnect settings default to unlimited retries

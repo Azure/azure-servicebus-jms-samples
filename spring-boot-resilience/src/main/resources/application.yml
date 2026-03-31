@@ -3,13 +3,13 @@
 # ---------------------------------------------------------------------------
 # Set ONE of the following via environment variables:
 #
-# Connection string (SAS) authentication:
-#   export SERVICEBUS_CONNECTION_STRING="Endpoint=sb://your-namespace.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=..."
-#
-# Entra ID (passwordless) authentication:
+# Microsoft Entra ID (recommended):
 #   export SERVICEBUS_NAMESPACE="your-namespace"
-#   (Uses DefaultAzureCredential — works with Managed Identity, Azure CLI,
+#   (Uses DefaultAzureCredential - works with Managed Identity, Azure CLI,
 #   IntelliJ plugin, VS Code plugin, and other credential sources.)
+#
+# Connection string (SAS):
+#   export SERVICEBUS_CONNECTION_STRING="Endpoint=sb://your-namespace.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=..."
 
 servicebus:
   connection-string: ${SERVICEBUS_CONNECTION_STRING:}

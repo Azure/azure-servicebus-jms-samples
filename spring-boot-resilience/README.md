@@ -77,13 +77,7 @@ The default row (both unset) matches what this sample configures explicitly.
 
 ## Setup
 
-### Option 1: Connection string authentication
-
-```bash
-export SERVICEBUS_CONNECTION_STRING="Endpoint=sb://your-namespace.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=..."
-```
-
-### Option 2: Entra ID (passwordless) authentication
+### Option 1: Microsoft Entra ID (recommended)
 
 ```bash
 export SERVICEBUS_NAMESPACE="your-namespace"
@@ -91,6 +85,12 @@ export SERVICEBUS_NAMESPACE="your-namespace"
 
 This uses `DefaultAzureCredential`, which automatically picks up credentials from
 Managed Identity, Azure CLI, IntelliJ, VS Code, and other sources.
+
+### Option 2: Connection string
+
+```bash
+export SERVICEBUS_CONNECTION_STRING="Endpoint=sb://your-namespace.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=..."
+```
 
 ## Build and Run
 
