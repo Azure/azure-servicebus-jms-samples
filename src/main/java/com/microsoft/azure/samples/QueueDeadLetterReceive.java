@@ -102,6 +102,10 @@ public class QueueDeadLetterReceive {
             System.out.println("\nReceiving from queue DLQ: " + queueDlqPath);
 
             JmsQueue dlqDestination = new JmsQueue(queueDlqPath);
+
+            // In production, consider using a message selector to filter by
+            // DeadLetterReason or a custom correlation ID to avoid consuming
+            // unrelated messages already in the DLQ from previous runs.
             MessageConsumer dlqConsumer = session.createConsumer(dlqDestination);
 
             start = System.currentTimeMillis();
