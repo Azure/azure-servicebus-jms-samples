@@ -57,7 +57,7 @@ its own connection and can reconnect without affecting others.
 
 This sample configures factories explicitly in `JmsConfig.java`. The table below
 shows the equivalent behavior when using `spring-cloud-azure-starter-servicebus-jms`
-(v5.22+) with property-based configuration:
+(v6.2.0+) with property-based configuration:
 
 | `spring.jms.servicebus.pool.enabled` | `spring.jms.cache.enabled` | Sender | Listener |
 |:-------------------------------------|:---------------------------|:-------|:---------|
@@ -117,7 +117,7 @@ connection error events.
 
 1. **Using the same factory for senders and listeners.** Senders need caching
    for efficiency; listeners need raw connections for resilience. The old Spring
-   Cloud Azure default (pre-5.22) used the same factory for both.
+   Cloud Azure default (pre-6.2.0) used the same factory for both.
 
 2. **Missing exception listener.** Without one, connection drops are completely
    silent — no log entry, no metric, no alert. The only symptom is that messages

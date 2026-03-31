@@ -46,7 +46,7 @@ import org.springframework.jms.core.JmsTemplate;
  *
  * <h2>Spring Cloud Azure equivalent</h2>
  *
- * <p>If you use {@code spring-cloud-azure-starter-servicebus-jms} (version 5.22+),
+ * <p>If you use {@code spring-cloud-azure-starter-servicebus-jms} (version 6.2.0+),
  * the starter applies this same factory separation by default. This sample shows
  * the explicit configuration for users who need direct control or are on older
  * versions.</p>

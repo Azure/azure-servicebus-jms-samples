@@ -26,7 +26,7 @@ sample:
 # ---------------------------------------------------------------------------
 # This sample configures the connection factories explicitly in JmsConfig.java.
 # The table below shows the equivalent behavior when using
-# spring-cloud-azure-starter-servicebus-jms (v5.22+) with property-based config:
+# spring-cloud-azure-starter-servicebus-jms (v6.2.0+) with property-based config:
 #
 # (pool.enabled = spring.jms.servicebus.pool.enabled, cache.enabled = spring.jms.cache.enabled)
 # | spring.jms.servicebus.pool.enabled | spring.jms.cache.enabled | Sender factory                   | Listener factory                 |
