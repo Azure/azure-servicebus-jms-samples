@@ -102,8 +102,9 @@ public class JmsConfig {
         }
 
         throw new IllegalStateException(
-                "Set SERVICEBUS_CONNECTION_STRING or SERVICEBUS_NAMESPACE "
-                + "environment variable to connect to Azure Service Bus");
+                "Set servicebus.connection-string or servicebus.namespace property "
+                + "to connect to Azure Service Bus (e.g. via SERVICEBUS_CONNECTION_STRING "
+                + "or SERVICEBUS_NAMESPACE environment variable)");
     }
 
     // -----------------------------------------------------------------------
