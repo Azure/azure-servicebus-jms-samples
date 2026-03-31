@@ -1,0 +1,56 @@
+# ---------------------------------------------------------------------------
+# Azure Service Bus Connection
+# ---------------------------------------------------------------------------
+# Set ONE of the following via environment variables:
+#
+# Microsoft Entra ID (recommended):
+#   export SERVICEBUS_NAMESPACE="your-namespace"
+#   (Uses DefaultAzureCredential - works with Managed Identity, Azure CLI,
+#   IntelliJ plugin, VS Code plugin, and other credential sources.)
+#
+# Connection string:
+#   export SERVICEBUS_CONNECTION_STRING="Endpoint=sb://your-namespace.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=..."
+
+servicebus:
+  connection-string: ${SERVICEBUS_CONNECTION_STRING:}
+  namespace: ${SERVICEBUS_NAMESPACE:}
+
+# ---------------------------------------------------------------------------
+# Sample Settings
+# ---------------------------------------------------------------------------
+sample:
+  queue-name: testqueue
+
+# ---------------------------------------------------------------------------
+# Connection Factory Selection (reference)
+# ---------------------------------------------------------------------------
+# This sample configures the connection factories explicitly in JmsConfig.java.
+# The table below shows the equivalent behavior when using
+# spring-cloud-azure-starter-servicebus-jms (v6.2.0+) with property-based config:
+#
+# (pool.enabled = spring.jms.servicebus.pool.enabled, cache.enabled = spring.jms.cache.enabled)
+# | spring.jms.servicebus.pool.enabled | spring.jms.cache.enabled | Sender factory                   | Listener factory                 |
+# |:-----------------------------------|:-------------------------|:---------------------------------|:---------------------------------|
+# | (not set)                          | (not set)                | CachingConnectionFactory         | ServiceBusJmsConnectionFactory   |
+# | (not set)                          | true                     | CachingConnectionFactory         | CachingConnectionFactory         |
+# | (not set)                          | false                    | ServiceBusJmsConnectionFactory   | ServiceBusJmsConnectionFactory   |
+# | true                               | (not set)                | JmsPoolConnectionFactory         | JmsPoolConnectionFactory         |
+#
+# The default row (both unset) matches what this sample configures explicitly:
+#   Sender  → CachingConnectionFactory  (efficient connection/session reuse)
+#   Listener → raw factory              (independent per-listener connections)
+#
+# NEVER use SingleConnectionFactory for listeners — it shares one connection
+# across all listener containers. A closed connection blocks all listeners
+# with no recovery.
+
+# ---------------------------------------------------------------------------
+# Logging
+# ---------------------------------------------------------------------------
+logging:
+  level:
+    com.microsoft.azure.samples.resilience: INFO
+    org.springframework.jms: INFO
+    # Uncomment for AMQP-level debugging during troubleshooting:
+    # org.apache.qpid.jms: DEBUG
+    # com.azure.servicebus.jms: DEBUG
