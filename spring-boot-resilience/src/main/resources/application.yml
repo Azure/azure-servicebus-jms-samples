@@ -8,7 +8,7 @@
 #   (Uses DefaultAzureCredential - works with Managed Identity, Azure CLI,
 #   IntelliJ plugin, VS Code plugin, and other credential sources.)
 #
-# Connection string (SAS):
+# Connection string:
 #   export SERVICEBUS_CONNECTION_STRING="Endpoint=sb://your-namespace.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=..."
 
 servicebus:
