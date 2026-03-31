@@ -23,6 +23,12 @@ import com.microsoft.azure.samples.util.Constants;
  * The sample then reads those messages from the DLQ sub-queue and prints their
  * dead-letter metadata.
  *
+ * <b>Prerequisite:</b> The queue used by this sample must have
+ * "dead-lettering on message expiration" enabled. Without this setting,
+ * expired messages are silently discarded instead of being moved to the DLQ.
+ * Enable this in the Azure portal (queue settings) or via ARM/Bicep:
+ * {@code enableDeadLetteringOnMessageExpiration = true}.
+ *
  * This approach is used because the standard JMS API does not provide a way to
  * explicitly dead-letter (reject) a message. At the AMQP level, the REJECTED
  * disposition maps to DeadLetter(), but JMS only exposes acknowledge and recover.
@@ -79,6 +85,8 @@ public class QueueDeadLetterReceive {
              * queue automatically. No manual intervention is required.
              */
             System.out.println("\nWaiting " + EXPIRY_WAIT_MS + "ms for messages to expire...");
+            System.out.println("(The queue must have dead-lettering on message expiration enabled,");
+            System.out.println(" otherwise expired messages are discarded instead of dead-lettered.)");
             Thread.sleep(EXPIRY_WAIT_MS);
 
             /*
@@ -103,6 +111,9 @@ public class QueueDeadLetterReceive {
                 Message message = dlqConsumer.receive(timeout);
                 if (message == null) {
                     System.out.println("  No more messages in DLQ (timed out after " + timeout + "ms).");
+                    if (received == 0) {
+                        System.out.println("  Hint: Ensure the queue has dead-lettering on message expiration enabled.");
+                    }
                     break;
                 }
                 received++;

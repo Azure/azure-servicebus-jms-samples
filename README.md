@@ -42,8 +42,9 @@ Below is a quick summary of which samples included and what they are currently t
 
 ### Queue - Dead Letter Queue Receive
 
-   * Messages are sent to a queue with a short time-to-live (TTL).
-   * Messages expire and are moved to the dead letter sub-queue automatically.
+   * The queue must have "dead-lettering on message expiration" enabled.
+   * Messages are sent to the queue with a short time-to-live (TTL).
+   * Messages that expire are moved to the dead letter sub-queue automatically.
    * Dead-lettered messages are received from `<queue-name>/$deadletterqueue`.
    * Dead letter reason and description are printed from message properties.
    * The DLQ path format for topic subscriptions is also shown for reference.
