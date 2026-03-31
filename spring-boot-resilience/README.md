@@ -3,10 +3,9 @@
 Demonstrates correct connection factory configuration for Azure Service Bus JMS
 with resilient listeners and efficient senders.
 
-This sample addresses the #1 customer pain point with JMS on Service Bus:
-**listeners going silent and not recovering after token expiry or connection
-drops.** The root cause is using the wrong connection factory wrapper for
-listener containers.
+The most common issue with JMS on Service Bus is **listeners going silent and
+not recovering after token expiry or connection drops.** The root cause is using
+the wrong connection factory wrapper for listener containers.
 
 ## Architecture
 
@@ -55,8 +54,8 @@ state after token expiry:
 4. The application appears running, but no messages are consumed.
 5. The only fix is a restart.
 
-This exact failure mode caused a multi-month production escalation where JMS
-listeners went silent for days without recovery.
+This failure mode causes listeners to go silent indefinitely with no automatic
+recovery — the application must be restarted.
 
 ## Spring Properties Reference
 
