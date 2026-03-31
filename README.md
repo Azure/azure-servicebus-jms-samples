@@ -46,3 +46,10 @@ Below is a quick summary of which samples included and what they are currently t
    * 2 producers are created on 2 different queues.
    * Message is sent to the 2nd producer through the first queue.
    * The scenario is validated by receiving from both queues to ensure the message lands in the same queue.
+
+### Queue - Session Send and Receive (FIFO)
+
+   * Queue must be created with sessions enabled (`requiresSession = true`) in the Azure portal or via ARM/Bicep.
+   * Set `Constants.SESSION_QUEUE` to the name of your session-enabled queue (default: `sessionqueue`).
+   * 10 messages are sent across 3 session IDs (`session-A`, `session-B`, `session-C`).
+   * Messages are received per session, demonstrating FIFO ordering within each session.
