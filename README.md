@@ -40,6 +40,13 @@ Below is a quick summary of which samples included and what they are currently t
    * 1 message (which satisfies the selector conditions) is received.
    * The remaining 9 messages can be browsed using the [Service Bus Explorer](https://docs.microsoft.com/azure/service-bus-messaging/explorer).
 
+### Queue - Scheduled Messages
+
+   * 1 immediate message and 1 scheduled message (30s delay) are sent.
+   * Messages are received, showing the scheduled message arrives after the delay.
+   * Uses JMS 2.0 `setDeliveryDelay()` API.
+   * **Requires Azure Service Bus Premium tier.**
+
 ### Cross entity Transactioned Send
 
    * Transacted session is created
