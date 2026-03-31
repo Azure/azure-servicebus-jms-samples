@@ -24,7 +24,7 @@ and listeners:
 │              │                                │                  │
 │  ┌───────────▼─────────────┐   ┌──────────────▼───────────────┐ │
 │  │  CachingConnectionFactory│  │  ServiceBusJmsConnectionFactory│
-│  │  (caches connections    │   │  (raw — each listener gets   │ │
+│  │  (caches connections    │   │  (raw - each listener gets    │ │
 │  │   and sessions)         │   │   its own AMQP connection)   │ │
 │  └───────────┬─────────────┘   └──────────────┬───────────────┘ │
 │              │                                │                  │
@@ -120,7 +120,7 @@ connection error events.
    Cloud Azure default (pre-6.2.0) used the same factory for both.
 
 2. **Missing exception listener.** Without one, connection drops are completely
-   silent — no log entry, no metric, no alert. The only symptom is that messages
+   silent. Without one, there is no log entry, no metric, and no alert. The only symptom is that messages
    stop being consumed.
 
 3. **Token expiry varies by platform.** On Windows, Entra ID tokens expire at
