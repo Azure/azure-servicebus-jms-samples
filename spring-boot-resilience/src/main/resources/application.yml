@@ -28,12 +28,13 @@ sample:
 # The table below shows the equivalent behavior when using
 # spring-cloud-azure-starter-servicebus-jms (v5.22+) with property-based config:
 #
-# | pool.enabled | cache.enabled | Sender factory              | Listener factory                 |
-# |:-------------|:-------------|:---------------------------- |:---------------------------------|
-# | (not set)    | (not set)    | CachingConnectionFactory     | ServiceBusJmsConnectionFactory   |
-# | (not set)    | true         | CachingConnectionFactory     | CachingConnectionFactory         |
-# | (not set)    | false        | ServiceBusJmsConnectionFactory | ServiceBusJmsConnectionFactory |
-# | true         | (not set)    | JmsPoolConnectionFactory     | JmsPoolConnectionFactory         |
+# (pool.enabled = spring.jms.servicebus.pool.enabled, cache.enabled = spring.jms.cache.enabled)
+# | spring.jms.servicebus.pool.enabled | spring.jms.cache.enabled | Sender factory                   | Listener factory                 |
+# |:-----------------------------------|:-------------------------|:---------------------------------|:---------------------------------|
+# | (not set)                          | (not set)                | CachingConnectionFactory         | ServiceBusJmsConnectionFactory   |
+# | (not set)                          | true                     | CachingConnectionFactory         | CachingConnectionFactory         |
+# | (not set)                          | false                    | ServiceBusJmsConnectionFactory   | ServiceBusJmsConnectionFactory   |
+# | true                               | (not set)                | JmsPoolConnectionFactory         | JmsPoolConnectionFactory         |
 #
 # The default row (both unset) matches what this sample configures explicitly:
 #   Sender  → CachingConnectionFactory  (efficient connection/session reuse)

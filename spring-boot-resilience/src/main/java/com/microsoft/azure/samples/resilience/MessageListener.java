@@ -17,11 +17,12 @@ import org.springframework.stereotype.Component;
  * container gets its own AMQP connection that can fail and recover independently
  * of other listeners.</p>
  *
- * <p>Error handling follows three categories:</p>
+ * <p>Error handling follows two categories:</p>
  * <ol>
  *   <li><b>Service/broker error</b> — JMS exception during acknowledgment or
- *       interaction with the broker. The message will be redelivered.</li>
- *   <li><b>Application error</b> — unexpected failure in business logic.</li>
+ *       interaction with the broker. Rethrown so the container triggers recovery.</li>
+ *   <li><b>Application error</b> — unexpected failure in business logic.
+ *       Rethrown so the container can trigger redelivery.</li>
  * </ol>
  */
 @Component
@@ -51,13 +52,15 @@ public class MessageListener {
             }
             message.acknowledge();
         } catch (JMSException e) {
-            // Service/broker error during acknowledgment — the message will be
-            // redelivered by the broker after the lock timeout expires.
+            // Service/broker error during acknowledgment — rethrow so the
+            // listener container can trigger its recovery/reconnection logic.
             log.error("Failed to acknowledge message: {}", e.getMessage(), e);
+            throw new RuntimeException("JMS broker error during acknowledgment", e);
         } catch (Exception e) {
-            // Application processing error. Depending on your requirements, you
-            // may want to dead-letter the message or implement retry logic here.
+            // Application processing error — rethrow so the container sees the
+            // failure and can trigger redelivery rather than silently succeeding.
             log.error("Error processing message: {}", e.getMessage(), e);
+            throw new RuntimeException("Error processing JMS message", e);
         }
     }
 }

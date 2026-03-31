@@ -64,8 +64,8 @@ This sample configures factories explicitly in `JmsConfig.java`. The table below
 shows the equivalent behavior when using `spring-cloud-azure-starter-servicebus-jms`
 (v5.22+) with property-based configuration:
 
-| `pool.enabled` | `cache.enabled` | Sender | Listener |
-|:---------------|:----------------|:-------|:---------|
+| `spring.jms.servicebus.pool.enabled` | `spring.jms.cache.enabled` | Sender | Listener |
+|:-------------------------------------|:---------------------------|:-------|:---------|
 | *(not set)* | *(not set)* | **CachingConnectionFactory** | **ServiceBusJmsConnectionFactory** |
 | *(not set)* | `true` | CachingConnectionFactory | CachingConnectionFactory |
 | *(not set)* | `false` | ServiceBusJmsConnectionFactory | ServiceBusJmsConnectionFactory |
