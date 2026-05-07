@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.4.3</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.microsoft.azure.samples</groupId>
+    <artifactId>spring-boot-jms-resilience</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>Spring Boot JMS Resilience</name>
+    <description>
+        Azure Service Bus JMS resilience sample — demonstrates correct connection
+        factory selection for senders (CachingConnectionFactory) and listeners
+        (raw ServiceBusJmsConnectionFactory) to prevent silent listener failures.
+    </description>
+
+    <properties>
+        <java.version>17</java.version>
+    </properties>
+
+    <dependencies>
+        <!-- Spring Boot core (DI, lifecycle, logging) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- Spring JMS: JmsTemplate, @JmsListener, CachingConnectionFactory -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jms</artifactId>
+        </dependency>
+
+        <!-- Azure Service Bus JMS connection factory (AMQP 1.0 via QPID) -->
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-servicebus-jms</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+
+        <!-- Explicit JMS API so jakarta.jms types don't rely on transitives -->
+        <dependency>
+            <groupId>jakarta.jms</groupId>
+            <artifactId>jakarta.jms-api</artifactId>
+        </dependency>
+
+        <!-- Entra ID (passwordless) authentication -->
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-identity</artifactId>
+            <version>1.18.0</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

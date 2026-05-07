@@ -1,0 +1,131 @@
+# Spring Boot JMS resilience sample
+
+Demonstrates correct connection factory configuration for Azure Service Bus JMS
+with resilient listeners and efficient senders.
+
+Choosing the right connection factory wrapper for senders and listeners is
+essential for reliable JMS operation with Service Bus. This sample shows the
+recommended configuration: cached connections for senders, raw connections
+for listeners.
+
+## Architecture
+
+The sample uses **two different connection factory configurations** for senders
+and listeners:
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│  Spring Boot Application                                         │
+│                                                                  │
+│  ┌─────────────────────────┐   ┌──────────────────────────────┐ │
+│  │  MessageSender          │   │  MessageListener             │ │
+│  │  (JmsTemplate)          │   │  (@JmsListener)              │ │
+│  └───────────┬─────────────┘   └──────────────┬───────────────┘ │
+│              │                                │                  │
+│  ┌───────────▼─────────────┐   ┌──────────────▼───────────────┐ │
+│  │  CachingConnectionFactory│  │  ServiceBusJmsConnectionFactory│
+│  │  (caches connections    │   │  (raw - each listener gets    │ │
+│  │   and sessions)         │   │   its own AMQP connection)   │ │
+│  └───────────┬─────────────┘   └──────────────┬───────────────┘ │
+│              │                                │                  │
+└──────────────┼────────────────────────────────┼──────────────────┘
+               │                                │
+               ▼                                ▼
+     ┌─────────────────────────────────────────────┐
+     │  Azure Service Bus (Premium)                 │
+     └─────────────────────────────────────────────┘
+```
+
+### Why separate factories?
+
+| Role | Factory | Reason |
+|------|---------|--------|
+| **Senders** | `CachingConnectionFactory` | Reuses connections and sessions across sends. Without caching, `JmsTemplate` creates and closes a connection per send, which can exhaust broker resources under load. |
+| **Listeners** | Raw `ServiceBusJmsConnectionFactory` | Each listener container gets its own AMQP connection with independent lifecycle. If one connection fails (token expiry, gateway upgrade), only that listener is affected, and Spring recreates the connection automatically. |
+
+### What NOT to use for listeners
+
+**Never use `SingleConnectionFactory` for listener containers.** It forces all
+listeners to share a single JMS connection. If that connection is disrupted for
+any reason (token expiry, gateway upgrade, network interruption), all listeners
+lose connectivity simultaneously and can't recover independently.
+
+By using the raw `ServiceBusJmsConnectionFactory`, each listener container manages
+its own connection and can reconnect without affecting others.
+
+## Spring Properties Reference
+
+This sample configures factories explicitly in `JmsConfig.java`. The following table
+shows the equivalent behavior when using `spring-cloud-azure-starter-servicebus-jms`
+(v6.2.0+) with property-based configuration:
+
+| `spring.jms.servicebus.pool.enabled` | `spring.jms.cache.enabled` | Sender | Listener |
+|:-------------------------------------|:---------------------------|:-------|:---------|
+| *(not set)* | *(not set)* | **CachingConnectionFactory** | **ServiceBusJmsConnectionFactory** |
+| *(not set)* | `true` | CachingConnectionFactory | CachingConnectionFactory |
+| *(not set)* | `false` | ServiceBusJmsConnectionFactory | ServiceBusJmsConnectionFactory |
+| `true` | *(not set)* | JmsPoolConnectionFactory | JmsPoolConnectionFactory |
+
+The default row (both unset) matches what this sample configures explicitly.
+
+## Prerequisites
+
+- **Java 17 or later**
+- **Maven 3.8 or later**
+- **Azure Service Bus Premium namespace** (JMS 2.0 requires Premium tier)
+- A queue named `testqueue` (configurable via `sample.queue-name` property)
+
+## Setup
+
+### Option 1: Microsoft Entra ID (recommended)
+
+```bash
+export SERVICEBUS_NAMESPACE="your-namespace"
+```
+
+This option uses `DefaultAzureCredential`, which automatically picks up credentials from
+Managed Identity, Azure CLI, IntelliJ, VS Code, and other sources.
+
+### Option 2: Connection string
+
+```bash
+export SERVICEBUS_CONNECTION_STRING="Endpoint=sb://your-namespace.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=..."
+```
+
+## Build and run
+
+```bash
+cd spring-boot-resilience
+mvn clean package
+java -jar target/spring-boot-jms-resilience-0.0.1-SNAPSHOT.jar
+```
+
+The application sends a test message every 10 seconds and listens for messages
+on the configured queue. Watch the console for send and receive logs and any
+connection error events.
+
+## Key files
+
+| File | Purpose |
+|------|---------|
+| `JmsConfig.java` | **The core of the sample.** Creates the raw factory, `CachingConnectionFactory` for senders, listener container factory with recovery settings, and the `ExceptionListener` for observability. |
+| `MessageSender.java` | Sends messages via `JmsTemplate` with cached connections. |
+| `MessageListener.java` | Receives messages via `@JmsListener` with error handling that separates broker errors from application errors. |
+| `application.yml` | Connection properties, queue name, and logging configuration. |
+
+## Known pitfalls
+
+1. **Using the same factory for senders and listeners.** Senders need caching
+   for efficiency. Listeners need raw connections for resilience. The old Spring
+   Cloud Azure default (pre-6.2.0) used the same factory for both.
+
+1. **Missing exception listener.** Without one, connection drops produce no
+   log entry, no metric, and no alert. The only symptom is that messages
+   stop being consumed.
+
+1. **`SingleConnectionFactory` for listeners.** Prevents independent listener
+   recovery (see "What NOT to use" earlier in this article).
+
+1. **`JmsPoolConnectionFactory` for listeners.** Pooled connections can become
+   stale. If you must pool, ensure health-check and eviction settings are
+   properly configured.
