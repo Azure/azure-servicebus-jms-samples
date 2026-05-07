@@ -40,6 +40,15 @@ Below is a quick summary of which samples included and what they are currently t
    * 1 message (which satisfies the selector conditions) is received.
    * The remaining 9 messages can be browsed using the [Service Bus Explorer](https://docs.microsoft.com/azure/service-bus-messaging/explorer).
 
+### Queue - Dead Letter Queue Receive
+
+   * The queue must have "dead-lettering on message expiration" enabled.
+   * Messages are sent to the queue with a short time-to-live (TTL).
+   * Messages that expire are moved to the dead letter sub-queue automatically.
+   * Dead-lettered messages are received from `<queue-name>/$deadletterqueue`.
+   * Dead letter reason and description are printed from message properties.
+   * The DLQ path format for topic subscriptions is also shown for reference.
+
 ### Cross entity Transactioned Send
 
    * Transacted session is created
