@@ -1,55 +1,90 @@
-# README
+# Azure Service Bus JMS samples
 
-This repository holds the samples for JMS 2.0 implementation for Azure Service Bus - Premium tier
+Sample applications that exercise the [Azure Service Bus JMS 2.0 client](https://learn.microsoft.com/azure/service-bus-messaging/how-to-use-java-message-service-20)
+against an Azure Service Bus **Premium** namespace. The samples use the Jakarta
+Messaging API (`jakarta.jms`) provided by `com.azure:azure-servicebus-jms` 2.1.0
+and demonstrate queues, topics, durable subscriptions, transactions, large
+messages, message selectors, and scheduled delivery.
 
+## Prerequisites
 
-## Before you begin
+* A [Service Bus Premium](https://learn.microsoft.com/azure/service-bus-messaging/service-bus-premium-messaging) namespace. JMS 2.0 is a Premium-only feature.
+* Java 8 or later.
+* [Maven](https://maven.apache.org/) (the samples are a Maven project).
+* A Java IDE such as [IntelliJ IDEA](https://www.jetbrains.com/idea/) or [Eclipse](https://www.eclipse.org/ide/), or any other tool that can run a `main` method.
 
-   * Download the Java IDE of choice - [Eclipse](https://www.eclipse.org/ide/) or [IntelliJ](https://www.jetbrains.com/idea/).
-   * Clone the repository - This repository contains a Maven project that can be easily imported into the IDE. Follow this [guide](https://www.omnijava.com/2016/07/10/importing-maven-projects-from-git-into-eclipse-that-were-created-by-netbeans/) for quick steps.
-   * Add Configuration - Add Service Bus Connection string to the Constants.java class.
-   
-		public static final String SERVICE_BUS_CONNECTION_STRING = "<YOUR_SERVICEBUS_CONNECTION_STRING>";
-   
-   * Select each individual sample, and run as a Java Application.
-   
-   	![Run Java Application](media/Run_Java_app.jpg)
+## Configure authentication
 
+Open [src/main/java/com/microsoft/azure/samples/util/Constants.java](src/main/java/com/microsoft/azure/samples/util/Constants.java)
+and configure **one** of the two options below. The `ConnectionHelper` prefers
+Entra ID when both are set.
+
+### Option 1 (recommended): Microsoft Entra ID
+
+Set `SERVICE_BUS_HOST` to your namespace's fully qualified host name. The samples
+authenticate via [`DefaultAzureCredential`](https://learn.microsoft.com/java/api/overview/azure/identity-readme),
+which picks up your developer credentials (Azure CLI, Visual Studio, IntelliJ,
+environment variables) or a managed identity when running in Azure.
+
+```java
+public static final String SERVICE_BUS_HOST = "your-namespace.servicebus.windows.net";
+```
+
+The signed-in identity needs the **Azure Service Bus Data Owner** role (or Data
+Sender / Data Receiver, scoped appropriately) on the namespace.
+
+### Option 2: connection string
+
+Set `SERVICE_BUS_CONNECTION_STRING` to a SAS connection string from the namespace's
+**Shared access policies** blade. The string must include `SharedAccessKeyName`
+and `SharedAccessKey`.
+
+```java
+public static final String SERVICE_BUS_CONNECTION_STRING = "Endpoint=sb://...;SharedAccessKeyName=...;SharedAccessKey=...";
+```
+
+### Queue and topic names
+
+The default destinations are `testqueue` and `testtopic`. Override
+`Constants.QUEUE` and `Constants.TOPIC` if your namespace uses different names.
+Queues and topics are created on demand by the JMS client when a producer or
+consumer first uses them.
+
+## Run a sample
+
+Each sample is a standalone class with a `main` method. Pick one and run it from
+your IDE, or from the command line:
+
+```powershell
+mvn compile exec:java -Dexec.mainClass="com.microsoft.azure.samples.QueueReceive"
+```
+
+Most samples accept an optional message count as the first program argument
+(default is 10).
+
+![Run Java Application](media/Run_Java_app.jpg)
 
 ## Samples
 
-Below is a quick summary of which samples included and what they are currently testing.
+| Sample | What it shows |
+|--------|---------------|
+| [QueueReceive](src/main/java/com/microsoft/azure/samples/QueueReceive.java) | Send and receive text messages on a queue. |
+| [QueueReceive10MB](src/main/java/com/microsoft/azure/samples/QueueReceive10MB.java) | Send and receive 10 MB messages, demonstrating Premium's [large message support](https://learn.microsoft.com/azure/service-bus-messaging/service-bus-premium-messaging#large-messages-support). |
+| [QueueReceiveSelector](src/main/java/com/microsoft/azure/samples/QueueReceiveSelector.java) | Filter messages on the broker side with a [JMS message selector](https://learn.microsoft.com/azure/service-bus-messaging/jms-developer-guide#jms-message-selectors). |
+| [QueueScheduledSend](src/main/java/com/microsoft/azure/samples/QueueScheduledSend.java) | Send a scheduled message using JMS 2.0's `setDeliveryDelay()` API and observe the delayed arrival. |
+| [QueueTransactions](src/main/java/com/microsoft/azure/samples/QueueTransactions.java) | Use a `SESSION_TRANSACTED` session to commit and roll back batches of sends. |
+| [CrossEntityTransactionedSend](src/main/java/com/microsoft/azure/samples/CrossEntityTransactionedSend.java) | Send to two queues atomically through a single transacted session by using one of them as the [transaction root](https://learn.microsoft.com/azure/service-bus-messaging/service-bus-transactions#transactions-across-entities). |
+| [TopicSubscribers](src/main/java/com/microsoft/azure/samples/TopicSubscribers.java) | Publish to a topic and consume with non-durable subscribers, including a selector-filtered subscriber. |
+| [TopicDurableSubscribers](src/main/java/com/microsoft/azure/samples/TopicDurableSubscribers.java) | Publish to a topic and consume with durable subscribers (`createDurableSubscriber` and `createSharedDurableConsumer`). The sample unsubscribes at the end; comment out the `unsubscribe` calls to keep the subscriptions for inspection. |
 
-### Queue - Send and Receive
+## Inspect messages
 
-   * Queue is created (if it doesn't exist).
-   * 10 messages are sent.
-   * 10 messages are received.
-   
-### Queue - Send and Receive messages upto 10 MB
+Use [Service Bus Explorer](https://learn.microsoft.com/azure/service-bus-messaging/explorer)
+in the Azure portal to peek at messages that the samples leave behind (for
+example, the messages the selector sample doesn't consume).
 
-   * Queue is created (if it doesn't exist).
-   * 10 messages of 10 MB each are sent.
-   * 10 messages of 10 MB each are received.
+## More information
 
-### Queue - Send and Receive messages with message selectors
-
-   * Queue is created (if it doesn't exist).
-   * 10 messages are sent - each with a custom property and a JMSCorrelation ID set.
-   * A consumer is created with a message selector (JMSCorrelationID='5' AND prop1='test' OR prop2='test')
-   * 1 message (which satisfies the selector conditions) is received.
-   * The remaining 9 messages can be browsed using the [Service Bus Explorer](https://docs.microsoft.com/azure/service-bus-messaging/explorer).
-
-### Queue - Scheduled Messages
-
-   * 1 immediate message and 1 scheduled message (30s delay) are sent.
-   * Messages are received, showing the scheduled message arrives after the delay.
-   * Uses JMS 2.0 `setDeliveryDelay()` API.
-   * **Requires Azure Service Bus Premium tier.**
-
-### Cross entity Transactioned Send
-
-   * Transacted session is created
-   * 2 producers are created on 2 different queues.
-   * Message is sent to the 2nd producer through the first queue.
-   * The scenario is validated by receiving from both queues to ensure the message lands in the same queue.
+* [Service Bus JMS 2.0 developer guide](https://learn.microsoft.com/azure/service-bus-messaging/jms-developer-guide)
+* [Use Service Bus with the JMS 2.0 client](https://learn.microsoft.com/azure/service-bus-messaging/how-to-use-java-message-service-20)
+* [Service Bus Premium overview](https://learn.microsoft.com/azure/service-bus-messaging/service-bus-premium-messaging)
