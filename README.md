@@ -4,9 +4,21 @@ Sample applications that exercise the [Azure Service Bus JMS 2.0 client](https:/
 against an Azure Service Bus **Premium** namespace. The samples use the Jakarta
 Messaging API (`jakarta.jms`) provided by `com.azure:azure-servicebus-jms` 2.1.0
 and demonstrate queues, topics, durable subscriptions, transactions, large
-messages, message selectors, and scheduled delivery.
+messages, message selectors, scheduled delivery, and resilient Spring Boot
+listener configuration.
+
+## Repository layout
+
+* **Standalone Java samples** under [src/main/java/com/microsoft/azure/samples](src/main/java/com/microsoft/azure/samples) - small, focused `main`-method classes that each demonstrate one JMS feature. Built by the top-level `pom.xml`.
+* **Spring Boot resilience sample** under [spring-boot-resilience/](spring-boot-resilience) - a standalone Spring Boot application with its own `pom.xml` that demonstrates the recommended connection factory configuration for senders and listeners. See [spring-boot-resilience/README.md](spring-boot-resilience/README.md) for build and run instructions.
+
+The two sample sets are independent Maven projects and are built separately.
 
 ## Prerequisites
+
+The prerequisites below apply to the standalone Java samples. The Spring Boot
+resilience sample has its own prerequisites (including Java 17) - see its
+[README](spring-boot-resilience/README.md).
 
 * A [Service Bus Premium](https://learn.microsoft.com/azure/service-bus-messaging/service-bus-premium-messaging) namespace. JMS 2.0 is a Premium-only feature.
 * Java 8 or later.
@@ -76,6 +88,21 @@ Most samples accept an optional message count as the first program argument
 | [CrossEntityTransactionedSend](src/main/java/com/microsoft/azure/samples/CrossEntityTransactionedSend.java) | Send to two queues atomically through a single transacted session by using one of them as the [transaction root](https://learn.microsoft.com/azure/service-bus-messaging/service-bus-transactions#transactions-across-entities). |
 | [TopicSubscribers](src/main/java/com/microsoft/azure/samples/TopicSubscribers.java) | Publish to a topic and consume with non-durable subscribers, including a selector-filtered subscriber. |
 | [TopicDurableSubscribers](src/main/java/com/microsoft/azure/samples/TopicDurableSubscribers.java) | Publish to a topic and consume with durable subscribers (`createDurableSubscriber` and `createSharedDurableConsumer`). The sample unsubscribes at the end; comment out the `unsubscribe` calls to keep the subscriptions for inspection. |
+
+## Spring Boot resilience sample
+
+The [spring-boot-resilience](spring-boot-resilience) module is a standalone
+Spring Boot application that demonstrates the recommended connection factory
+configuration for Azure Service Bus JMS:
+
+* `CachingConnectionFactory` for senders, so `JmsTemplate` reuses connections and sessions across sends.
+* Raw `ServiceBusJmsConnectionFactory` for listeners, so each listener container manages its own AMQP connection and can recover independently when a connection is disrupted.
+
+It also shows the listener container settings and `ExceptionListener` wiring
+needed to surface connection failures instead of letting listeners stall
+silently. See [spring-boot-resilience/README.md](spring-boot-resilience/README.md)
+for the full walkthrough, including a comparison against the
+`spring-cloud-azure-starter-servicebus-jms` property-based defaults.
 
 ## Inspect messages
 
